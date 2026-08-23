@@ -2,15 +2,64 @@
 <html lang="zh-TW">
 <head>
   <meta charset="UTF-8">
-  <title>我的第一個網站</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>我的個人網站</title>
   <style>
-    body { font-family: sans-serif; text-align: center; padding-top: 50px; background-color: #f4f4f9; }
-    h1 { color: #333; }
-    p { color: #666; font-size: 18px; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: #f8f9fa;
+      color: #333;
+      line-height: 1.6;
+      max-width: 600px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+    .card {
+      background: #ffffff;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    }
+    h1 {
+      color: #1a73e8;
+      margin-top: 0;
+    }
+    ul {
+      padding-left: 20px;
+    }
+    li {
+      margin-bottom: 8px;
+    }
+    .btn {
+      display: inline-block;
+      margin-top: 15px;
+      padding: 10px 20px;
+      background-color: #1a73e8;
+      color: #ffffff;
+      text-decoration: none;
+      border-radius: 6px;
+      font-weight: bold;
+    }
   </style>
 </head>
 <body>
-  <h1>🎉 歡迎來到我的第一個網站！</h1>
-  <p>這是用 GitHub 免費架設成功的網頁。</p>
+
+  <div class="card">
+    <h1>👋 歡迎來到我的網站</h1>
+    <p>這是一個使用 GitHub Pages 免費建立的純 HTML 頁面。</p>
+
+    <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
+
+    <h3>📌 關於這個網站</h3>
+    <ul>
+      <li>目前正在建置與測試中</li>
+      <li>採用乾淨簡潔的純 HTML 結構</li>
+      <li>未來可以隨時擴充內容</li>
+    </ul>
+
+    <!-- 這裡可以替換成你想要的連結，例如 Google 或其他網頁 -->
+    <a href="https://github.com" target="_blank" class="btn">前往 GitHub</a>
+  </div>
+
 </body>
 </html>
