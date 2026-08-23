@@ -3,63 +3,213 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>我的個人網站</title>
+  <title>線上抽獎系統</title>
   <style>
+    :root {
+      --primary: #4f46e5;
+      --primary-hover: #4338ca;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text: #1e293b;
+    }
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      background-color: #f8f9fa;
-      color: #333;
-      line-height: 1.6;
-      max-width: 600px;
-      margin: 40px auto;
-      padding: 0 20px;
+      background-color: var(--bg);
+      color: var(--text);
+      display: flex;
+      justify-content: center;
+      padding: 30px 15px;
+      margin: 0;
     }
-    .card {
-      background: #ffffff;
+    .container {
+      background: var(--card-bg);
+      width: 100%;
+      max-width: 550px;
       padding: 30px;
-      border-radius: 12px;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+      border-radius: 16px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
     }
     h1 {
-      color: #1a73e8;
+      text-align: center;
       margin-top: 0;
+      color: var(--primary);
     }
-    ul {
-      padding-left: 20px;
+    .box {
+      margin-bottom: 20px;
     }
-    li {
+    label {
+      display: block;
+      font-weight: 600;
       margin-bottom: 8px;
     }
-    .btn {
-      display: inline-block;
-      margin-top: 15px;
-      padding: 10px 20px;
-      background-color: #1a73e8;
-      color: #ffffff;
-      text-decoration: none;
-      border-radius: 6px;
+    textarea, input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      font-size: 14px;
+      box-sizing: border-box;
+      outline: none;
+    }
+    textarea:focus, input:focus {
+      border-color: var(--primary);
+    }
+    .lottery-screen {
+      background: #0f172a;
+      color: #38bdf8;
+      font-size: 28px;
       font-weight: bold;
+      text-align: center;
+      padding: 35px 15px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      min-height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      letter-spacing: 1px;
+    }
+    .btn-group {
+      display: flex;
+      gap: 10px;
+    }
+    button {
+      flex: 1;
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      padding: 12px;
+      font-size: 16px;
+      font-weight: bold;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+    button:hover {
+      background-color: var(--primary-hover);
+    }
+    button:disabled {
+      background-color: #94a3b8;
+      cursor: not-allowed;
+    }
+    .winner-board {
+      margin-top: 25px;
+      background: #f1f5f9;
+      padding: 15px;
+      border-radius: 8px;
+    }
+    .winner-board h3 {
+      margin: 0 0 10px 0;
+      font-size: 16px;
+    }
+    .winner-list {
+      margin: 0;
+      padding-left: 20px;
+    }
+    .winner-list li {
+      margin-bottom: 5px;
+      font-weight: 500;
+      color: #0f172a;
     }
   </style>
 </head>
 <body>
 
-  <div class="card">
-    <h1>👋 歡迎來到我的網站</h1>
-    <p>這是一個使用 GitHub Pages 免費建立的純 HTML 頁面。</p>
+  <div class="container">
+    <h1>🎁 幸運抽獎系統</h1>
 
-    <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
+    <div class="box">
+      <label>名單輸入（每行一個人名 / 編號）：</label>
+      <textarea id="nameList" rows="5" placeholder="例如：
+小明
+小華
+小美
+阿強"></textarea>
+    </div>
 
-    <h3>📌 關於這個網站</h3>
-    <ul>
-      <li>目前正在建置與測試中</li>
-      <li>採用乾淨簡潔的純 HTML 結構</li>
-      <li>未來可以隨時擴充內容</li>
-    </ul>
+    <div class="box">
+      <label>抽獎主題 / 獎項名稱：</label>
+      <input type="text" id="prizeName" placeholder="例如：特獎 - iPhone 16" value="幸運大獎">
+    </div>
 
-    <!-- 這裡可以替換成你想要的連結，例如 Google 或其他網頁 -->
-    <a href="https://github.com" target="_blank" class="btn">前往 GitHub</a>
+    <!-- 抽獎動態展示區 -->
+    <div class="lottery-screen" id="screen">準備就緒</div>
+
+    <div class="btn-group">
+      <button id="drawBtn" onclick="startLottery()">開始抽獎</button>
+      <button style="background-color: #64748b;" onclick="clearWinners()">清空中獎紀錄</button>
+    </div>
+
+    <!-- 中獎名單 -->
+    <div class="winner-board">
+      <h3>🏆 中獎名單</h3>
+      <ol class="winner-list" id="winnerList"></ol>
+    </div>
   </div>
+
+  <script>
+    let isDrawing = false;
+
+    function getCandidates() {
+      const text = document.getElementById('nameList').value.trim();
+      if (!text) return [];
+      return text.split('\n').map(name => name.trim()).filter(name => name.length > 0);
+    }
+
+    function startLottery() {
+      if (isDrawing) return;
+
+      const candidates = getCandidates();
+      if (candidates.length === 0) {
+        alert('請先在名單欄位中輸入至少一位參與者！');
+        return;
+      }
+
+      isDrawing = true;
+      const screen = document.getElementById('screen');
+      const drawBtn = document.getElementById('drawBtn');
+      const prizeName = document.getElementById('prizeName').value || '幸運獎';
+      drawBtn.disabled = true;
+
+      // 跑馬燈滾動效果
+      let counter = 0;
+      const totalRolls = 30; // 滾動次數
+      const interval = setInterval(() => {
+        const randomIndex = Math.floor(Math.random() * candidates.length);
+        screen.innerText = candidates[randomIndex];
+        counter++;
+
+        if (counter >= totalRolls) {
+          clearInterval(interval);
+          
+          // 決定最終得獎者
+          const finalIndex = Math.floor(Math.random() * candidates.length);
+          const winner = candidates[finalIndex];
+          screen.innerText = `🎉 ${winner}`;
+
+          // 新增到下方中獎清單
+          const list = document.getElementById('winnerList');
+          const li = document.createElement('li');
+          li.innerText = `【${prizeName}】: ${winner}`;
+          list.appendChild(li);
+
+          // 從名單中移除已中獎者（避免重複中獎）
+          candidates.splice(finalIndex, 1);
+          document.getElementById('nameList').value = candidates.join('\n');
+
+          isDrawing = false;
+          drawBtn.disabled = false;
+        }
+      }, 70);
+    }
+
+    function clearWinners() {
+      if (confirm('確定要清空中獎名單紀錄嗎？')) {
+        document.getElementById('winnerList').innerHTML = '';
+        document.getElementById('screen').innerText = '準備就緒';
+      }
+    }
+  </script>
 
 </body>
 </html>
