@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>醫生抽獎系統 - 500人大抽獎</title>
+  <title>醫生抽獎系統</title>
   <style>
     * { box-sizing: border-box; }
     body {
       margin: 0;
-      padding: 0;
+      padding: 20px 0;
       font-family: "Microsoft JhengHei", "PingFang TC", sans-serif;
       background-color: #fce4ec;
       display: flex;
@@ -17,36 +17,40 @@
       min-height: 100vh;
     }
 
-    /* 頂部橫幅 */
+    /* 美化後的四角橢圓橫幅 */
     .banner-container {
-      width: 100%;
-      background-color: #fff;
+      width: calc(100% - 40px);
+      max-width: 900px;
+      margin: 10px auto 20px;
+      border-radius: 28px; /* 四角大圓角/橢圓弧度 */
+      overflow: hidden;
+      box-shadow: 0 10px 25px rgba(233, 30, 99, 0.15);
+      border: 3px solid #ffffff;
+      background-color: #ffffff;
       display: flex;
       justify-content: center;
-      border-bottom: 2px solid #f8bbd0;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
     }
     .banner-container img {
       width: 100%;
-      max-width: 1200px;
       height: auto;
       display: block;
+      border-radius: 25px;
     }
 
     /* 分頁導覽列 */
     .nav-tabs {
       display: flex;
       gap: 15px;
-      margin: 25px 0 10px;
+      margin: 10px 0 15px;
     }
     .tab-btn {
-      padding: 12px 30px;
-      font-size: 17px;
+      padding: 12px 32px;
+      font-size: 16px;
       font-weight: bold;
       border: none;
       border-radius: 30px;
       background-color: #ffffff;
-      color: #888;
+      color: #718096;
       cursor: pointer;
       box-shadow: 0 4px 10px rgba(0,0,0,0.06);
       transition: 0.2s;
@@ -57,14 +61,14 @@
       box-shadow: 0 4px 15px rgba(233, 30, 99, 0.35);
     }
 
-    /* 卡片通用設定 */
+    /* 主卡片面板 */
     .view-panel {
       display: none;
       background: #ffffff;
       padding: 35px;
-      border-radius: 20px;
+      border-radius: 24px;
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-      max-width: 1000px;
+      max-width: 900px;
       width: calc(100% - 40px);
       margin-bottom: 40px;
     }
@@ -72,27 +76,28 @@
 
     /* 設定頁面樣式 */
     .setting-title {
-      font-size: 22px;
+      font-size: 20px;
       font-weight: bold;
       color: #e91e63;
-      margin-bottom: 15px;
+      margin-bottom: 12px;
     }
     textarea {
       width: 100%;
-      height: 280px;
+      height: 260px;
       border: 2px solid #f8bbd0;
       border-radius: 12px;
-      padding: 15px;
+      padding: 14px;
       font-size: 15px;
       line-height: 1.6;
       resize: vertical;
       outline: none;
+      font-family: inherit;
     }
     .btn-action {
       background-color: #3b82f6;
       color: white;
       border: none;
-      padding: 14px 28px;
+      padding: 14px 30px;
       border-radius: 10px;
       font-size: 16px;
       font-weight: bold;
@@ -102,7 +107,7 @@
     }
     .btn-action:hover { background-color: #2563eb; }
 
-    /* 抽獎舞台頁面（超大視覺） */
+    /* 抽獎舞台頁面 */
     .stage-container {
       display: flex;
       flex-direction: column;
@@ -110,7 +115,7 @@
       text-align: center;
     }
     .stage-info {
-      font-size: 20px;
+      font-size: 18px;
       font-weight: bold;
       color: #c2185b;
       margin-bottom: 25px;
@@ -119,11 +124,11 @@
     /* 超大滾輪顯示框 */
     .slot-display {
       width: 100%;
-      max-width: 750px;
-      height: 200px;
+      max-width: 700px;
+      height: 190px;
       background: linear-gradient(145deg, #1e293b, #0f172a);
-      border: 6px solid #e91e63;
-      border-radius: 25px;
+      border: 5px solid #e91e63;
+      border-radius: 24px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -132,31 +137,30 @@
       overflow: hidden;
     }
     .slot-name {
-      font-size: 64px;
+      font-size: 58px;
       font-weight: 900;
       color: #00f2fe;
       text-shadow: 0 0 20px rgba(0, 242, 254, 0.6);
       letter-spacing: 2px;
-      transition: transform 0.05s;
     }
 
     /* 抽獎按鈕 */
     .btn-spin-large {
-      margin-top: 35px;
+      margin-top: 30px;
       background: linear-gradient(135deg, #ff4081, #e91e63);
       color: white;
       border: none;
-      padding: 20px 80px;
+      padding: 18px 70px;
       border-radius: 40px;
-      font-size: 26px;
-      font-weight: 900;
+      font-size: 24px;
+      font-weight: bold;
       cursor: pointer;
-      box-shadow: 0 8px 25px rgba(233, 30, 99, 0.4);
+      box-shadow: 0 8px 25px rgba(233, 30, 99, 0.35);
       transition: 0.2s;
     }
     .btn-spin-large:hover {
-      transform: scale(1.05);
-      box-shadow: 0 12px 30px rgba(233, 30, 99, 0.55);
+      transform: scale(1.03);
+      box-shadow: 0 12px 30px rgba(233, 30, 99, 0.45);
     }
     .btn-spin-large:disabled {
       background: #cbd5e1;
@@ -167,25 +171,25 @@
 
     /* 中獎紀錄 */
     .history-card {
-      margin-top: 35px;
+      margin-top: 30px;
       width: 100%;
-      max-width: 750px;
+      max-width: 700px;
       background: #fff5f8;
-      border-radius: 12px;
+      border-radius: 14px;
       padding: 18px;
       border: 1px solid #f8bbd0;
       text-align: left;
     }
-    .history-card h4 { margin: 0 0 10px; color: #c2185b; }
+    .history-card h4 { margin: 0 0 10px; color: #c2185b; font-size: 16px; }
     .history-items {
-      max-height: 140px;
+      max-height: 130px;
       overflow-y: auto;
-      font-size: 15px;
+      font-size: 14px;
       color: #334155;
       line-height: 1.8;
     }
 
-    /* 中獎全螢幕彈窗 */
+    /* 中獎彈窗 */
     .winner-modal {
       display: none;
       position: fixed;
@@ -195,19 +199,17 @@
       z-index: 1000;
       align-items: center;
       justify-content: center;
-      animation: fadeIn 0.3s ease;
     }
     .winner-modal.show { display: flex; }
     .modal-content {
       background: #ffffff;
-      padding: 50px 60px;
-      border-radius: 25px;
+      padding: 45px 55px;
+      border-radius: 24px;
       text-align: center;
-      box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-      animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      box-shadow: 0 20px 50px rgba(0,0,0,0.4);
     }
     .modal-winner-name {
-      font-size: 56px;
+      font-size: 52px;
       font-weight: 900;
       color: #e91e63;
       margin: 20px 0;
@@ -217,50 +219,39 @@
       color: white;
       border: none;
       padding: 12px 35px;
-      font-size: 18px;
-      border-radius: 25px;
+      font-size: 16px;
+      border-radius: 20px;
       cursor: pointer;
       font-weight: bold;
-    }
-
-    @keyframes popIn {
-      from { transform: scale(0.6); opacity: 0; }
-      to { transform: scale(1); opacity: 1; }
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
     }
   </style>
 </head>
 <body>
 
-  <!-- 頂部橫幅 -->
+  <!-- 四角微橢圓美化橫幅 -->
   <header class="banner-container">
     <img src="./banner.png" alt="醫生抽獎系統橫幅">
   </header>
 
-  <!-- 分頁標籤 -->
+  <!-- 分頁切換 -->
   <div class="nav-tabs">
-    <button class="tab-btn active" onclick="switchTab('stage')">🎯 抽獎大舞台</button>
-    <button class="tab-btn" onclick="switchTab('settings')">⚙️ 名單與設定</button>
+    <button class="tab-btn active" onclick="switchTab('stage')">抽獎舞台</button>
+    <button class="tab-btn" onclick="switchTab('settings')">名單與設定</button>
   </div>
 
-  <!-- 分頁 1：抽獎大舞台 -->
+  <!-- 分頁 1：抽獎舞台 -->
   <div id="stagePanel" class="view-panel active">
     <div class="stage-container">
       <div class="stage-info" id="stageInfo">目前名單：共 500 位</div>
 
-      <!-- 超大滾輪顯示 -->
       <div class="slot-display">
         <div class="slot-name" id="slotName">準備抽獎</div>
       </div>
 
-      <button class="btn-spin-large" id="spinBtn" onclick="startHugeLottery()">⚡ 開始抽獎 ⚡</button>
+      <button class="btn-spin-large" id="spinBtn" onclick="startHugeLottery()">開始抽獎</button>
 
-      <!-- 中獎紀錄 -->
       <div class="history-card">
-        <h4>🏆 中獎紀錄清單</h4>
+        <h4>中獎紀錄清單</h4>
         <div class="history-items" id="historyList">尚無中獎紀錄</div>
       </div>
     </div>
@@ -268,8 +259,8 @@
 
   <!-- 分頁 2：名單設定 -->
   <div id="settingsPanel" class="view-panel">
-    <div class="setting-title">📝 參加名單管理（支援 500+ 人）</div>
-    <p style="color: #666; font-size: 14px; margin-top: -5px;">請在此貼上所有抽獎者姓名，一行一位：</p>
+    <div class="setting-title">參加名單管理</div>
+    <p style="color: #666; font-size: 14px; margin-top: -5px;">請在下方輸入抽獎名單，一行一位：</p>
     <textarea id="nameInput"></textarea>
     <br>
     <button class="btn-action" onclick="saveNames()">儲存名單並更新</button>
@@ -278,9 +269,9 @@
   <!-- 中獎彈窗 -->
   <div class="winner-modal" id="winnerModal">
     <div class="modal-content">
-      <h2 style="margin: 0; color: #64748b; font-size: 24px;">🎉 恭喜中獎幸運兒 🎉</h2>
+      <h2 style="margin: 0; color: #64748b; font-size: 22px;">恭喜中獎幸運兒</h2>
       <div class="modal-winner-name" id="modalWinner">醫生 88 號</div>
-      <button class="modal-close-btn" onclick="closeModal()">確認並繼續</button>
+      <button class="modal-close-btn" onclick="closeModal()">確認</button>
     </div>
   </div>
 
@@ -288,7 +279,6 @@
     let names = [];
     let isSpinning = false;
 
-    // 預設產生 500 位測試醫生名單
     function generateInitial500() {
       let list = [];
       for (let i = 1; i <= 500; i++) {
@@ -297,11 +287,9 @@
       return list.join("\n");
     }
 
-    // 初始化名單
     document.getElementById("nameInput").value = generateInitial500();
     saveNames(false);
 
-    // 分頁切換
     function switchTab(tab) {
       if (isSpinning) return;
       document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
@@ -316,19 +304,17 @@
       }
     }
 
-    // 儲存名單
     function saveNames(showAlert = true) {
       const text = document.getElementById("nameInput").value.trim();
       names = text.split("\n").map(n => n.trim()).filter(n => n.length > 0);
       document.getElementById("stageInfo").innerText = `目前名單：共 ${names.length} 位`;
       
       if (showAlert) {
-        alert(`名單更新成功！目前共有 ${names.length} 位參與抽獎。`);
+        alert(`名單更新成功，目前共有 ${names.length} 位參與抽獎。`);
         switchTab('stage');
       }
     }
 
-    // 超大跑馬燈抽獎邏輯
     function startHugeLottery() {
       if (isSpinning || names.length === 0) return;
 
@@ -337,30 +323,25 @@
       const slotName = document.getElementById("slotName");
       spinBtn.disabled = true;
 
-      let speed = 40; // 滾動速度 (毫秒)
+      let speed = 40;
       let elapsed = 0;
-      const totalDuration = 4500; // 總旋轉時間 4.5 秒
+      const totalDuration = 4500;
 
       const interval = setInterval(() => {
         const randomIndex = Math.floor(Math.random() * names.length);
         slotName.innerText = names[randomIndex];
-        slotName.style.transform = `scale(${1 + Math.random() * 0.1})`;
         elapsed += speed;
 
-        // 後半段逐漸減速
         if (elapsed > totalDuration - 1500) {
           speed += 25;
         }
 
         if (elapsed >= totalDuration) {
           clearInterval(interval);
-          slotName.style.transform = "scale(1)";
           
-          // 抽出最終得獎者
           const finalWinner = names[Math.floor(Math.random() * names.length)];
           slotName.innerText = finalWinner;
           
-          // 彈出中獎視窗
           showWinnerModal(finalWinner);
           recordHistory(finalWinner);
 
