@@ -30,34 +30,15 @@
       display: block;
     }
 
-    /* 抽獎舞台主容器 (並排佈局) */
-    .stage-container {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 40px;
-      max-width: 900px;
-      width: 90%;
-      margin: 30px auto;
-      align-items: flex-start;
-    }
-
-    /* 左側轉盤區 */
-    .wheel-section {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      flex: 1;
-      min-width: 320px;
-    }
-
+    /* 轉盤外層容器 */
     .wheel-container {
       position: relative;
-      margin-bottom: 20px;
+      margin: 30px auto;
       width: 320px;
       height: 320px;
     }
 
+    /* 頂部指針 */
     .pointer {
       position: absolute;
       top: -10px;
@@ -71,10 +52,20 @@
       z-index: 10;
     }
 
+    /* 轉盤畫布 */
     #wheelCanvas {
       border-radius: 50%;
       box-shadow: 0 4px 12px rgba(0,0,0,0.15);
       transition: transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99);
+    }
+
+    /* 操作區 */
+    .controls {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 40px;
     }
 
     .spin-btn {
@@ -100,151 +91,39 @@
       box-shadow: none;
     }
 
+    /* 抽中結果文字 */
     #resultText {
-      font-size: 18px;
+      font-size: 20px;
       font-weight: bold;
       color: #d81b60;
-      margin-top: 15px;
-      min-height: 24px;
-    }
-
-    /* 右側參與人名單區 */
-    .participants-section {
-      flex: 1;
-      min-width: 300px;
-      background: white;
-      border-radius: 16px;
-      padding: 20px;
-      box-shadow: 0 4px 15px rgba(255, 105, 180, 0.15);
-      border: 2px solid #f8bbd0;
-    }
-
-    .list-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-bottom: 2px dashed #f8bbd0;
-      padding-bottom: 10px;
-      margin-bottom: 15px;
-    }
-
-    .list-header h3 {
-      margin: 0;
-      color: #c2185b;
-      font-size: 18px;
-    }
-
-    .badge-count {
-      background: #fce4ec;
-      color: #d81b60;
-      padding: 4px 10px;
-      border-radius: 12px;
-      font-size: 12px;
-      font-weight: bold;
-    }
-
-    .participant-list {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-      max-height: 320px;
-      overflow-y: auto;
-    }
-
-    .participant-item {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 10px 12px;
-      border-bottom: 1px solid #fce4ec;
-      transition: background-color 0.2s;
-    }
-    .participant-item:hover {
-      background-color: #fff9fa;
-    }
-
-    .user-info {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .user-id {
-      font-size: 12px;
-      font-weight: bold;
-      color: #888;
-      background: #f5f5f5;
-      padding: 2px 6px;
-      border-radius: 4px;
-    }
-
-    .user-name {
-      font-weight: bold;
-      color: #333;
-    }
-
-    .user-dept {
-      font-size: 12px;
-      color: #777;
-    }
-
-    .status-tag {
-      font-size: 12px;
-      padding: 3px 8px;
-      border-radius: 10px;
-      background: #e8f5e9;
-      color: #2e7d32;
+      min-height: 28px;
     }
   </style>
 </head>
 <body>
 
-  <!-- 頂部橫幅 -->
+  <!-- 頂部橫幅區塊 -->
   <header class="banner-container">
     <img src="banner.png" alt="醫生抽獎系統橫幅">
   </header>
 
-  <!-- 舞台主區域 -->
-  <div class="stage-container">
-    
-    <!-- 左：轉盤 -->
-    <div class="wheel-section">
-      <div class="wheel-container">
-        <div class="pointer"></div>
-        <canvas id="wheelCanvas" width="320" height="320"></canvas>
-      </div>
-      <button class="spin-btn" id="spinBtn" onclick="spinWheel()">開始抽獎</button>
-      <div id="resultText"></div>
-    </div>
+  <!-- 轉盤區塊 -->
+  <div class="wheel-container">
+    <div class="pointer"></div>
+    <canvas id="wheelCanvas" width="320" height="320"></canvas>
+  </div>
 
-    <!-- 右：參與人名單看板 -->
-    <div class="participants-section">
-      <div class="list-header">
-        <h3>📋 參與者名單</h3>
-        <span class="badge-count" id="totalCount">共 0 人</span>
-      </div>
-      <ul class="participant-list" id="participantList">
-        <!-- 名單由 JavaScript 動態生成 -->
-      </ul>
-    </div>
-
+  <!-- 按鈕與結果 -->
+  <div class="controls">
+    <button class="spin-btn" id="spinBtn" onclick="spinWheel()">開始抽獎</button>
+    <div id="resultText"></div>
   </div>
 
   <script>
-    // 1. 參與人資料名單（可在這裡自由增減或修改）
-    const participants = [
-      { id: "001", name: "陳建宏", dept: "外科主治醫師" },
-      { id: "002", name: "林雅婷", dept: "兒科住院醫師" },
-      { id: "003", name: "張家豪", dept: "急診科副主任" },
-      { id: "004", name: "黃欣怡", dept: "麻醉科主治醫師" },
-      { id: "005", name: "劉冠廷", dept: "骨科住院醫師" },
-      { id: "006", name: "王心凌", dept: "家醫科實習醫師" }
-    ];
-
-    // 2. 轉盤獎項與顏色
+    // 1. 設定獎項清單與對應顏色
     const prizes = ["特等獎", "謝謝參與", "二獎", "小禮物", "再來一次", "頭獎"];
     const colors = ["#ffcdd2", "#f8bbd0", "#e1bee7", "#d1c4e9", "#c5cae9", "#bbdefb"];
-
+    
     const canvas = document.getElementById("wheelCanvas");
     const ctx = canvas.getContext("2d");
     const spinBtn = document.getElementById("spinBtn");
@@ -255,27 +134,7 @@
     let currentRotation = 0;
     let isSpinning = false;
 
-    // 渲染名單清單
-    function renderParticipants() {
-      const listEl = document.getElementById("participantList");
-      const countEl = document.getElementById("totalCount");
-      countEl.innerText = `共 ${participants.length} 人`;
-
-      listEl.innerHTML = participants.map(p => `
-        <li class="participant-item">
-          <div class="user-info">
-            <span class="user-id">#${p.id}</span>
-            <div>
-              <div class="user-name">${p.name}</div>
-              <div class="user-dept">${p.dept}</div>
-            </div>
-          </div>
-          <span class="status-tag">已報到</span>
-        </li>
-      `).join('');
-    }
-
-    // 繪製轉盤
+    // 2. 繪製轉盤扇形與文字
     function drawWheel() {
       const radius = canvas.width / 2;
       ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -289,6 +148,7 @@
         ctx.fill();
         ctx.stroke();
 
+        // 繪製文字
         ctx.save();
         ctx.fillStyle = "#333";
         ctx.font = "bold 14px sans-serif";
@@ -300,21 +160,26 @@
       }
     }
 
-    // 抽獎邏輯
+    // 3. 點擊抽獎邏輯
     function spinWheel() {
       if (isSpinning) return;
       isSpinning = true;
       spinBtn.disabled = true;
       resultText.innerText = "抽獎中...";
 
+      // 隨機選出中獎 index (0 ~ numSegments - 1)
       const winningIndex = Math.floor(Math.random() * numSegments);
+
+      // 計算指針指向該扇區所需的角度
       const segmentDeg = 360 / numSegments;
+      // 指針在最上方 (270度位置)，需做角度補償
       const targetDeg = 270 - (winningIndex * segmentDeg + segmentDeg / 2);
-      const extraRotations = 360 * 5;
+      const extraRotations = 360 * 5; // 多轉 5 圈增加刺激感
       
       currentRotation += extraRotations + ((targetDeg - (currentRotation % 360) + 360) % 360);
       canvas.style.transform = `rotate(${currentRotation}deg)`;
 
+      // 動畫結束後顯示結果 (對應 CSS 4 秒)
       setTimeout(() => {
         isSpinning = false;
         spinBtn.disabled = false;
@@ -322,8 +187,7 @@
       }, 4000);
     }
 
-    // 初始化
-    renderParticipants();
+    // 初始化轉盤
     drawWheel();
   </script>
 </body>
