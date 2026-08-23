@@ -37,6 +37,13 @@
     .box {
       margin-bottom: 20px;
     }
+    .row {
+      display: flex;
+      gap: 15px;
+    }
+    .row .box {
+      flex: 1;
+    }
     label {
       display: block;
       font-weight: 600;
@@ -57,17 +64,18 @@
     .lottery-screen {
       background: #0f172a;
       color: #38bdf8;
-      font-size: 28px;
+      font-size: 22px;
       font-weight: bold;
       text-align: center;
-      padding: 35px 15px;
+      padding: 25px 15px;
       border-radius: 12px;
       margin-bottom: 20px;
-      min-height: 40px;
+      min-height: 50px;
       display: flex;
       align-items: center;
       justify-content: center;
-      letter-spacing: 1px;
+      line-height: 1.5;
+      white-space: pre-line;
     }
     .btn-group {
       display: flex;
@@ -107,7 +115,7 @@
       padding-left: 20px;
     }
     .winner-list li {
-      margin-bottom: 5px;
+      margin-bottom: 6px;
       font-weight: 500;
       color: #0f172a;
     }
@@ -124,12 +132,19 @@
 小明
 小華
 小美
-阿強"></textarea>
+阿強
+小玲"></textarea>
     </div>
 
-    <div class="box">
-      <label>抽獎主題 / 獎項名稱：</label>
-      <input type="text" id="prizeName" placeholder="例如：特獎 - iPhone 16" value="幸運大獎">
+    <div class="row">
+      <div class="box">
+        <label>獎項名稱：</label>
+        <input type="text" id="prizeName" value="幸運大獎">
+      </div>
+      <div class="box" style="max-width: 120px;">
+        <label>抽取人數：</label>
+        <input type="number" id="drawCount" min="1" value="1">
+      </div>
     </div>
 
     <!-- 抽獎動態展示區 -->
@@ -142,7 +157,7 @@
 
     <!-- 中獎名單 -->
     <div class="winner-board">
-      <h3>🏆 中獎名單</h3>
+      <h3>🏆 中獎名單紀錄</h3>
       <ol class="winner-list" id="winnerList"></ol>
     </div>
   </div>
@@ -160,8 +175,21 @@
       if (isDrawing) return;
 
       const candidates = getCandidates();
+      const countInput = document.getElementById('drawCount');
+      const count = parseInt(countInput.value, 10) || 1;
+
       if (candidates.length === 0) {
         alert('請先在名單欄位中輸入至少一位參與者！');
+        return;
+      }
+
+      if (count <= 0) {
+        alert('抽取人數必須大於 0！');
+        return;
+      }
+
+      if (count > candidates.length) {
+        alert(`抽獎人數（${count} 人）不能大於目前名單總人數（${candidates.length} 人）！`);
         return;
       }
 
@@ -173,34 +201,42 @@
 
       // 跑馬燈滾動效果
       let counter = 0;
-      const totalRolls = 30; // 滾動次數
+      const totalRolls = 25;
       const interval = setInterval(() => {
-        const randomIndex = Math.floor(Math.random() * candidates.length);
-        screen.innerText = candidates[randomIndex];
+        // 隨機挑出 count 個假名單滾動
+        const tempShuffled = [...candidates].sort(() => 0.5 - Math.random());
+        const tempDisplay = tempShuffled.slice(0, count).join('、');
+        screen.innerText = tempDisplay;
         counter++;
 
         if (counter >= totalRolls) {
           clearInterval(interval);
-          
-          // 決定最終得獎者
-          const finalIndex = Math.floor(Math.random() * candidates.length);
-          const winner = candidates[finalIndex];
-          screen.innerText = `🎉 ${winner}`;
 
-          // 新增到下方中獎清單
+          // 決定最終抽出的一組得獎者
+          const winners = [];
+          for (let i = 0; i < count; i++) {
+            const randomIndex = Math.floor(Math.random() * candidates.length);
+            winners.push(candidates.splice(randomIndex, 1)[0]);
+          }
+
+          // 顯示得獎畫面
+          screen.innerText = `🎉 中獎者：\n${winners.join('、')}`;
+
+          // 新增到下方歷史清單
           const list = document.getElementById('winnerList');
-          const li = document.createElement('li');
-          li.innerText = `【${prizeName}】: ${winner}`;
-          list.appendChild(li);
+          winners.forEach(winner => {
+            const li = document.createElement('li');
+            li.innerText = `【${prizeName}】: ${winner}`;
+            list.appendChild(li);
+          });
 
-          // 從名單中移除已中獎者（避免重複中獎）
-          candidates.splice(finalIndex, 1);
+          // 自動從輸入框移除已中獎的人
           document.getElementById('nameList').value = candidates.join('\n');
 
           isDrawing = false;
           drawBtn.disabled = false;
         }
-      }, 70);
+      }, 80);
     }
 
     function clearWinners() {
