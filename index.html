@@ -336,18 +336,18 @@
   <!-- 分頁 1：抽獎舞台 -->
   <div id="stagePanel" class="view-panel active">
     <div class="stage-container">
-      <div class="stage-info" id="stageInfo">目前名單：共 500 位</div>
+      <div class="stage-info" id="stageInfo">目前名單：共 0 位</div>
 
       <!-- 每次抽取人數設定 -->
       <div class="count-selector-container">
         <label for="drawCount">每次抽出人數：</label>
-        <input type="number" id="drawCount" class="count-input" value="1" min="1" max="500">
+        <input type="number" id="drawCount" class="count-input" value="1" min="1" max="1">
         <span style="color: #888; font-size: 14px;">位</span>
       </div>
 
       <!-- 紫色背景 + 亮黃字體滾輪 -->
       <div class="slot-display">
-        <div class="slot-name" id="slotName">準備抽獎</div>
+        <div class="slot-name" id="slotName">請先設定名單</div>
       </div>
 
       <button class="btn-spin-large" id="spinBtn" onclick="startHugeLottery()">開始抽獎</button>
@@ -366,8 +366,8 @@
   <!-- 分頁 2：名單設定 -->
   <div id="settingsPanel" class="view-panel">
     <div class="setting-title">參加名單管理</div>
-    <p style="color: #666; font-size: 14px; margin-top: -5px;">請在下方輸入抽獎名單，一行一位：</p>
-    <textarea id="nameInput"></textarea>
+    <p style="color: #666; font-size: 14px; margin-top: -5px;">請在下方貼上或輸入抽獎名單，一行一位：</p>
+    <textarea id="nameInput" placeholder="請在此輸入名單，例如：&#10;陳醫師&#10;林醫師&#10;張醫師"></textarea>
     <br>
     <button class="btn-action" onclick="saveNames()">儲存名單並更新</button>
   </div>
@@ -392,16 +392,8 @@
     let names = [];
     let isSpinning = false;
 
-    // 預設產生 500 位名單
-    function generateInitial500() {
-      let list = [];
-      for (let i = 1; i <= 500; i++) {
-        list.push(`醫生 ${i} 號`);
-      }
-      return list.join("\n");
-    }
-
-    document.getElementById("nameInput").value = generateInitial500();
+    // 初始化：預設為空白
+    document.getElementById("nameInput").value = "";
     saveNames(false);
 
     function switchTab(tab) {
@@ -420,11 +412,19 @@
 
     function saveNames(showAlert = true) {
       const text = document.getElementById("nameInput").value.trim();
-      names = text.split("\n").map(n => n.trim()).filter(n => n.length > 0);
+      names = text ? text.split("\n").map(n => n.trim()).filter(n => n.length > 0) : [];
+      
       document.getElementById("stageInfo").innerText = `目前名單：共 ${names.length} 位`;
       
+      const slotName = document.getElementById("slotName");
+      if (names.length === 0) {
+        slotName.innerText = "請先設定名單";
+      } else {
+        slotName.innerText = "準備抽獎";
+      }
+      
       const drawCountInput = document.getElementById("drawCount");
-      drawCountInput.max = names.length;
+      drawCountInput.max = names.length > 0 ? names.length : 1;
 
       if (showAlert) {
         alert(`名單更新成功，目前共有 ${names.length} 位參與抽獎。`);
@@ -434,7 +434,13 @@
 
     // 多得獎者抽獎邏輯
     function startHugeLottery() {
-      if (isSpinning || names.length === 0) return;
+      if (isSpinning) return;
+
+      if (names.length === 0) {
+        alert("目前名單內沒有參與者，請先至「名單與設定」輸入名單！");
+        switchTab('settings');
+        return;
+      }
 
       const drawCountInput = document.getElementById("drawCount");
       let count = parseInt(drawCountInput.value, 10);
