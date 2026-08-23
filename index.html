@@ -5,521 +5,326 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>醫生抽獎系統</title>
   <style>
-    * { box-sizing: border-box; }
     body {
       margin: 0;
-      padding: 20px 0;
-      font-family: "Microsoft JhengHei", "PingFang TC", sans-serif;
-      background-color: #fce4ec;
+      padding: 0;
+      font-family: "Microsoft JhengHei", sans-serif;
+      background-color: #fff0f5;
       display: flex;
       flex-direction: column;
       align-items: center;
-      min-height: 100vh;
     }
 
-    /* 美化後的四角橢圓橫幅 */
+    /* 頂端橫幅 */
     .banner-container {
-      width: calc(100% - 40px);
-      max-width: 900px;
-      margin: 10px auto 20px;
-      border-radius: 28px;
-      overflow: hidden;
-      box-shadow: 0 10px 25px rgba(233, 30, 99, 0.15);
-      border: 3px solid #ffffff;
-      background-color: #ffffff;
+      width: 100%;
       display: flex;
       justify-content: center;
+      background-color: #fce4ec;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
     }
     .banner-container img {
       width: 100%;
+      max-width: 900px;
       height: auto;
       display: block;
-      border-radius: 25px;
     }
 
-    /* 分頁導覽列 */
-    .nav-tabs {
-      display: flex;
-      gap: 15px;
-      margin: 10px 0 15px;
-    }
-    .tab-btn {
-      padding: 12px 32px;
-      font-size: 16px;
-      font-weight: bold;
-      border: none;
-      border-radius: 30px;
-      background-color: #ffffff;
-      color: #718096;
-      cursor: pointer;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.06);
-      transition: 0.2s;
-    }
-    .tab-btn.active {
-      background-color: #e91e63;
-      color: #ffffff;
-      box-shadow: 0 4px 15px rgba(233, 30, 99, 0.35);
-    }
-
-    /* 主卡片面板 */
-    .view-panel {
-      display: none;
-      background: #ffffff;
-      padding: 35px;
-      border-radius: 24px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-      max-width: 900px;
-      width: calc(100% - 40px);
-      margin-bottom: 25px;
-    }
-    .view-panel.active { display: block; }
-
-    /* 設定頁面樣式 */
-    .setting-title {
-      font-size: 20px;
-      font-weight: bold;
-      color: #e91e63;
-      margin-bottom: 12px;
-    }
-    textarea {
-      width: 100%;
-      height: 260px;
-      border: 2px solid #f8bbd0;
-      border-radius: 12px;
-      padding: 14px;
-      font-size: 15px;
-      line-height: 1.6;
-      resize: vertical;
-      outline: none;
-      font-family: inherit;
-    }
-    .btn-action {
-      background-color: #3b82f6;
-      color: white;
-      border: none;
-      padding: 14px 30px;
-      border-radius: 10px;
-      font-size: 16px;
-      font-weight: bold;
-      cursor: pointer;
-      margin-top: 15px;
-      transition: 0.2s;
-    }
-    .btn-action:hover { background-color: #2563eb; }
-
-    /* 抽獎舞台頁面 */
+    /* 抽獎舞台主容器 (並排佈局) */
     .stage-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 40px;
+      max-width: 900px;
+      width: 90%;
+      margin: 30px auto;
+      align-items: flex-start;
+    }
+
+    /* 左側轉盤區 */
+    .wheel-section {
       display: flex;
       flex-direction: column;
       align-items: center;
-      text-align: center;
+      flex: 1;
+      min-width: 320px;
     }
-    .stage-info {
+
+    .wheel-container {
+      position: relative;
+      margin-bottom: 20px;
+      width: 320px;
+      height: 320px;
+    }
+
+    .pointer {
+      position: absolute;
+      top: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0;
+      height: 0;
+      border-left: 15px solid transparent;
+      border-right: 15px solid transparent;
+      border-top: 25px solid #ff4081;
+      z-index: 10;
+    }
+
+    #wheelCanvas {
+      border-radius: 50%;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      transition: transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99);
+    }
+
+    .spin-btn {
+      padding: 12px 36px;
       font-size: 18px;
       font-weight: bold;
-      color: #c2185b;
-      margin-bottom: 15px;
-    }
-
-    /* 抽獎人數控制區 */
-    .count-selector-container {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 25px;
-      background: #fff0f5;
-      padding: 10px 24px;
-      border-radius: 30px;
-      border: 1px solid #f8bbd0;
-    }
-    .count-selector-container label {
-      font-weight: bold;
-      color: #c2185b;
-      font-size: 15px;
-    }
-    .count-input {
-      width: 75px;
-      padding: 6px 10px;
-      font-size: 16px;
-      font-weight: bold;
-      text-align: center;
-      border: 2px solid #e91e63;
-      border-radius: 8px;
-      outline: none;
-      color: #c2185b;
-    }
-
-    /* 紫色背景的滾輪顯示框 */
-    .slot-display {
-      width: 100%;
-      max-width: 700px;
-      height: 190px;
-      background: linear-gradient(135deg, #4a154b, #6b21a8, #3b0764);
-      border: 5px solid #e91e63;
-      border-radius: 24px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 12px 35px rgba(107, 33, 168, 0.4);
-      position: relative;
-      overflow: hidden;
-    }
-
-    /* 亮黃色發光字體 */
-    .slot-name {
-      font-size: 58px;
-      font-weight: 900;
-      color: #ffeb3b;
-      text-shadow: 0 0 20px rgba(255, 235, 59, 0.8), 0 0 10px rgba(255, 193, 7, 0.6);
-      letter-spacing: 2px;
-    }
-
-    /* 抽獎按鈕 */
-    .btn-spin-large {
-      margin-top: 30px;
-      background: linear-gradient(135deg, #ff4081, #e91e63);
       color: white;
+      background-color: #ff69b4;
       border: none;
-      padding: 18px 70px;
-      border-radius: 40px;
-      font-size: 24px;
-      font-weight: bold;
+      border-radius: 25px;
       cursor: pointer;
-      box-shadow: 0 8px 25px rgba(233, 30, 99, 0.35);
+      box-shadow: 0 4px 8px rgba(255, 105, 180, 0.4);
       transition: 0.2s;
     }
-    .btn-spin-large:hover {
-      transform: scale(1.03);
-      box-shadow: 0 12px 30px rgba(233, 30, 99, 0.45);
+    .spin-btn:hover {
+      background-color: #ff4081;
+      transform: scale(1.05);
     }
-    .btn-spin-large:disabled {
-      background: #cbd5e1;
+    .spin-btn:disabled {
+      background-color: #ccc;
       cursor: not-allowed;
       transform: none;
       box-shadow: none;
     }
 
-    /* 中獎紀錄卡片 */
-    .history-card {
-      margin-top: 30px;
-      width: 100%;
-      max-width: 700px;
-      background: #fff5f8;
-      border-radius: 14px;
-      padding: 18px;
-      border: 1px solid #f8bbd0;
-      text-align: left;
+    #resultText {
+      font-size: 18px;
+      font-weight: bold;
+      color: #d81b60;
+      margin-top: 15px;
+      min-height: 24px;
     }
-    .history-header {
+
+    /* 右側參與人名單區 */
+    .participants-section {
+      flex: 1;
+      min-width: 300px;
+      background: white;
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 4px 15px rgba(255, 105, 180, 0.15);
+      border: 2px solid #f8bbd0;
+    }
+
+    .list-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 12px;
-    }
-    .history-card h4 { margin: 0; color: #c2185b; font-size: 16px; }
-    .btn-clear-history {
-      background-color: #ffffff;
-      color: #e91e63;
-      border: 1px solid #f8bbd0;
-      padding: 5px 14px;
-      border-radius: 15px;
-      font-size: 13px;
-      font-weight: bold;
-      cursor: pointer;
-      transition: 0.2s;
-    }
-    .btn-clear-history:hover {
-      background-color: #fce4ec;
-      border-color: #e91e63;
-    }
-    .history-items {
-      max-height: 150px;
-      overflow-y: auto;
-      font-size: 14px;
-      color: #334155;
-      line-height: 1.8;
+      border-bottom: 2px dashed #f8bbd0;
+      padding-bottom: 10px;
+      margin-bottom: 15px;
     }
 
-    /* 底部警語 */
-    .footer-disclaimer {
-      width: calc(100% - 40px);
-      max-width: 900px;
-      margin: 10px auto 25px;
-      text-align: center;
-      padding: 18px 20px;
-      background-color: rgba(255, 255, 255, 0.6);
-      border: 1px dashed #f48fb1;
-      border-radius: 16px;
-      color: #880e4f;
-      font-size: 13px;
-      line-height: 1.8;
-    }
-    .footer-disclaimer .disclaimer-title {
-      font-weight: bold;
-      font-size: 14px;
-      margin-bottom: 4px;
-      color: #ad1457;
-    }
-
-    /* 中獎彈窗 */
-    .winner-modal {
-      display: none;
-      position: fixed;
-      top: 0; left: 0;
-      width: 100vw; height: 100vh;
-      background: rgba(0,0,0,0.75);
-      z-index: 1000;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-    }
-    .winner-modal.show { display: flex; }
-    .modal-content {
-      background: #ffffff;
-      padding: 40px 45px;
-      border-radius: 24px;
-      text-align: center;
-      box-shadow: 0 20px 50px rgba(0,0,0,0.4);
-      max-width: 650px;
-      width: 100%;
-      max-height: 85vh;
-      display: flex;
-      flex-direction: column;
-    }
-    .modal-winner-container {
-      margin: 20px 0;
-      overflow-y: auto;
-      max-height: 45vh;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      justify-content: center;
-      padding: 5px;
-    }
-    .modal-winner-badge {
-      background: linear-gradient(135deg, #fce4ec, #f8bbd0);
+    .list-header h3 {
+      margin: 0;
       color: #c2185b;
-      padding: 12px 24px;
-      border-radius: 12px;
-      font-size: 24px;
-      font-weight: 900;
-      border: 2px solid #e91e63;
-      box-shadow: 0 4px 10px rgba(233, 30, 99, 0.15);
+      font-size: 18px;
     }
-    .modal-close-btn {
-      background: #3b82f6;
-      color: white;
-      border: none;
-      padding: 12px 35px;
-      font-size: 16px;
-      border-radius: 20px;
-      cursor: pointer;
+
+    .badge-count {
+      background: #fce4ec;
+      color: #d81b60;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 12px;
       font-weight: bold;
-      margin-top: 10px;
-      align-self: center;
+    }
+
+    .participant-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      max-height: 320px;
+      overflow-y: auto;
+    }
+
+    .participant-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 12px;
+      border-bottom: 1px solid #fce4ec;
+      transition: background-color 0.2s;
+    }
+    .participant-item:hover {
+      background-color: #fff9fa;
+    }
+
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .user-id {
+      font-size: 12px;
+      font-weight: bold;
+      color: #888;
+      background: #f5f5f5;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+
+    .user-name {
+      font-weight: bold;
+      color: #333;
+    }
+
+    .user-dept {
+      font-size: 12px;
+      color: #777;
+    }
+
+    .status-tag {
+      font-size: 12px;
+      padding: 3px 8px;
+      border-radius: 10px;
+      background: #e8f5e9;
+      color: #2e7d32;
     }
   </style>
 </head>
 <body>
 
-  <!-- 四角微橢圓美化橫幅 -->
+  <!-- 頂部橫幅 -->
   <header class="banner-container">
-    <img src="./banner.png" alt="醫生抽獎系統橫幅">
+    <img src="banner.png" alt="醫生抽獎系統橫幅">
   </header>
 
-  <!-- 分頁切換 -->
-  <div class="nav-tabs">
-    <button class="tab-btn active" onclick="switchTab('stage')">抽獎舞台</button>
-    <button class="tab-btn" onclick="switchTab('settings')">名單與設定</button>
-  </div>
-
-  <!-- 分頁 1：抽獎舞台 -->
-  <div id="stagePanel" class="view-panel active">
-    <div class="stage-container">
-      <div class="stage-info" id="stageInfo">目前名單：共 500 位</div>
-
-      <!-- 每次抽取人數設定 -->
-      <div class="count-selector-container">
-        <label for="drawCount">每次抽出人數：</label>
-        <input type="number" id="drawCount" class="count-input" value="1" min="1" max="500">
-        <span style="color: #888; font-size: 14px;">位</span>
+  <!-- 舞台主區域 -->
+  <div class="stage-container">
+    
+    <!-- 左：轉盤 -->
+    <div class="wheel-section">
+      <div class="wheel-container">
+        <div class="pointer"></div>
+        <canvas id="wheelCanvas" width="320" height="320"></canvas>
       </div>
-
-      <!-- 紫色背景 + 亮黃字體滾輪 -->
-      <div class="slot-display">
-        <div class="slot-name" id="slotName">準備抽獎</div>
-      </div>
-
-      <button class="btn-spin-large" id="spinBtn" onclick="startHugeLottery()">開始抽獎</button>
-
-      <!-- 中獎紀錄（含重新整理按鈕） -->
-      <div class="history-card">
-        <div class="history-header">
-          <h4>中獎紀錄清單</h4>
-          <button class="btn-clear-history" onclick="clearHistory()">重新整理 / 清除紀錄</button>
-        </div>
-        <div class="history-items" id="historyList">尚無中獎紀錄</div>
-      </div>
+      <button class="spin-btn" id="spinBtn" onclick="spinWheel()">開始抽獎</button>
+      <div id="resultText"></div>
     </div>
-  </div>
 
-  <!-- 分頁 2：名單設定 -->
-  <div id="settingsPanel" class="view-panel">
-    <div class="setting-title">參加名單管理</div>
-    <p style="color: #666; font-size: 14px; margin-top: -5px;">請在下方輸入抽獎名單，一行一位：</p>
-    <textarea id="nameInput"></textarea>
-    <br>
-    <button class="btn-action" onclick="saveNames()">儲存名單並更新</button>
-  </div>
-
-  <!-- 底部警語與版權宣告 -->
-  <footer class="footer-disclaimer">
-    <div class="disclaimer-title">版權聲明與使用規範</div>
-    <div>本系統之所有設計、介面版型、視覺素材及程式原始碼均受著作權法保護。</div>
-    <div>嚴禁任何形式之未授權抄襲、轉載、重製、二次搬運或作為商業營利用途，違者將依法追究相關法律責任。</div>
-  </footer>
-
-  <!-- 中獎彈窗（支援多位得獎者展示） -->
-  <div class="winner-modal" id="winnerModal">
-    <div class="modal-content">
-      <h2 style="margin: 0; color: #64748b; font-size: 22px;" id="modalTitle">恭喜中獎幸運兒</h2>
-      <div class="modal-winner-container" id="modalWinnerContainer"></div>
-      <button class="modal-close-btn" onclick="closeModal()">確認</button>
+    <!-- 右：參與人名單看板 -->
+    <div class="participants-section">
+      <div class="list-header">
+        <h3>📋 參與者名單</h3>
+        <span class="badge-count" id="totalCount">共 0 人</span>
+      </div>
+      <ul class="participant-list" id="participantList">
+        <!-- 名單由 JavaScript 動態生成 -->
+      </ul>
     </div>
+
   </div>
 
   <script>
-    let names = [];
+    // 1. 參與人資料名單（可在這裡自由增減或修改）
+    const participants = [
+      { id: "001", name: "陳建宏", dept: "外科主治醫師" },
+      { id: "002", name: "林雅婷", dept: "兒科住院醫師" },
+      { id: "003", name: "張家豪", dept: "急診科副主任" },
+      { id: "004", name: "黃欣怡", dept: "麻醉科主治醫師" },
+      { id: "005", name: "劉冠廷", dept: "骨科住院醫師" },
+      { id: "006", name: "王心凌", dept: "家醫科實習醫師" }
+    ];
+
+    // 2. 轉盤獎項與顏色
+    const prizes = ["特等獎", "謝謝參與", "二獎", "小禮物", "再來一次", "頭獎"];
+    const colors = ["#ffcdd2", "#f8bbd0", "#e1bee7", "#d1c4e9", "#c5cae9", "#bbdefb"];
+
+    const canvas = document.getElementById("wheelCanvas");
+    const ctx = canvas.getContext("2d");
+    const spinBtn = document.getElementById("spinBtn");
+    const resultText = document.getElementById("resultText");
+
+    const numSegments = prizes.length;
+    const arcSize = (2 * Math.PI) / numSegments;
+    let currentRotation = 0;
     let isSpinning = false;
 
-    // 預設產生 500 位名單
-    function generateInitial500() {
-      let list = [];
-      for (let i = 1; i <= 500; i++) {
-        list.push(`醫生 ${i} 號`);
-      }
-      return list.join("\n");
+    // 渲染名單清單
+    function renderParticipants() {
+      const listEl = document.getElementById("participantList");
+      const countEl = document.getElementById("totalCount");
+      countEl.innerText = `共 ${participants.length} 人`;
+
+      listEl.innerHTML = participants.map(p => `
+        <li class="participant-item">
+          <div class="user-info">
+            <span class="user-id">#${p.id}</span>
+            <div>
+              <div class="user-name">${p.name}</div>
+              <div class="user-dept">${p.dept}</div>
+            </div>
+          </div>
+          <span class="status-tag">已報到</span>
+        </li>
+      `).join('');
     }
 
-    document.getElementById("nameInput").value = generateInitial500();
-    saveNames(false);
+    // 繪製轉盤
+    function drawWheel() {
+      const radius = canvas.width / 2;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    function switchTab(tab) {
+      for (let i = 0; i < numSegments; i++) {
+        const angle = i * arcSize;
+        ctx.beginPath();
+        ctx.fillStyle = colors[i % colors.length];
+        ctx.moveTo(radius, radius);
+        ctx.arc(radius, radius, radius, angle, angle + arcSize);
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.save();
+        ctx.fillStyle = "#333";
+        ctx.font = "bold 14px sans-serif";
+        ctx.translate(radius, radius);
+        ctx.rotate(angle + arcSize / 2);
+        ctx.textAlign = "right";
+        ctx.fillText(prizes[i], radius - 20, 5);
+        ctx.restore();
+      }
+    }
+
+    // 抽獎邏輯
+    function spinWheel() {
       if (isSpinning) return;
-      document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
-      document.querySelectorAll(".view-panel").forEach(p => p.classList.remove("active"));
-
-      if (tab === 'stage') {
-        document.querySelectorAll(".tab-btn")[0].classList.add("active");
-        document.getElementById("stagePanel").classList.add("active");
-      } else {
-        document.querySelectorAll(".tab-btn")[1].classList.add("active");
-        document.getElementById("settingsPanel").classList.add("active");
-      }
-    }
-
-    function saveNames(showAlert = true) {
-      const text = document.getElementById("nameInput").value.trim();
-      names = text.split("\n").map(n => n.trim()).filter(n => n.length > 0);
-      document.getElementById("stageInfo").innerText = `目前名單：共 ${names.length} 位`;
-      
-      const drawCountInput = document.getElementById("drawCount");
-      drawCountInput.max = names.length;
-
-      if (showAlert) {
-        alert(`名單更新成功，目前共有 ${names.length} 位參與抽獎。`);
-        switchTab('stage');
-      }
-    }
-
-    // 多得獎者抽獎邏輯
-    function startHugeLottery() {
-      if (isSpinning || names.length === 0) return;
-
-      const drawCountInput = document.getElementById("drawCount");
-      let count = parseInt(drawCountInput.value, 10);
-      if (isNaN(count) || count < 1) count = 1;
-      if (count > names.length) count = names.length;
-
       isSpinning = true;
-      const spinBtn = document.getElementById("spinBtn");
-      const slotName = document.getElementById("slotName");
       spinBtn.disabled = true;
+      resultText.innerText = "抽獎中...";
 
-      let speed = 40;
-      let elapsed = 0;
-      const totalDuration = 4000;
+      const winningIndex = Math.floor(Math.random() * numSegments);
+      const segmentDeg = 360 / numSegments;
+      const targetDeg = 270 - (winningIndex * segmentDeg + segmentDeg / 2);
+      const extraRotations = 360 * 5;
+      
+      currentRotation += extraRotations + ((targetDeg - (currentRotation % 360) + 360) % 360);
+      canvas.style.transform = `rotate(${currentRotation}deg)`;
 
-      const interval = setInterval(() => {
-        const randomIndex = Math.floor(Math.random() * names.length);
-        slotName.innerText = names[randomIndex];
-        elapsed += speed;
-
-        if (elapsed > totalDuration - 1200) {
-          speed += 25;
-        }
-
-        if (elapsed >= totalDuration) {
-          clearInterval(interval);
-
-          // 不重複隨機抽出 count 位中獎者
-          const shuffled = [...names].sort(() => 0.5 - Math.random());
-          const winners = shuffled.slice(0, count);
-
-          if (count === 1) {
-            slotName.innerText = winners[0];
-          } else {
-            slotName.innerText = `抽出 ${count} 位幸運兒`;
-          }
-
-          showWinnersModal(winners);
-          recordHistory(winners);
-
-          isSpinning = false;
-          spinBtn.disabled = false;
-        }
-      }, speed);
+      setTimeout(() => {
+        isSpinning = false;
+        spinBtn.disabled = false;
+        resultText.innerText = `🎉 恭喜獲得：【${prizes[winningIndex]}】！`;
+      }, 4000);
     }
 
-    // 彈出中獎視窗（支援多位）
-    function showWinnersModal(winners) {
-      const container = document.getElementById("modalWinnerContainer");
-      const title = document.getElementById("modalTitle");
-      container.innerHTML = "";
-
-      title.innerText = winners.length > 1 ? `恭喜 ${winners.length} 位中獎幸運兒` : `恭喜中獎幸運兒`;
-
-      winners.forEach(winner => {
-        const badge = document.createElement("div");
-        badge.className = "modal-winner-badge";
-        badge.innerText = winner;
-        container.appendChild(badge);
-      });
-
-      document.getElementById("winnerModal").classList.add("show");
-    }
-
-    function closeModal() {
-      document.getElementById("winnerModal").classList.remove("show");
-    }
-
-    // 寫入中獎紀錄
-    function recordHistory(winners) {
-      const historyList = document.getElementById("historyList");
-      if (historyList.innerText === "尚無中獎紀錄") {
-        historyList.innerHTML = "";
-      }
-      const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-      const winnersText = winners.join("、");
-      historyList.innerHTML = `<div>• [${time}] <b>${winnersText}</b></div>` + historyList.innerHTML;
-    }
-
-    // 清除 / 重新整理中獎紀錄
-    function clearHistory() {
-      if (confirm("確定要清除所有中獎紀錄嗎？")) {
-        document.getElementById("historyList").innerHTML = "尚無中獎紀錄";
-      }
-    }
+    // 初始化
+    renderParticipants();
+    drawWheel();
   </script>
 </body>
 </html>
