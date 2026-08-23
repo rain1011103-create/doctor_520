@@ -22,7 +22,7 @@
       width: calc(100% - 40px);
       max-width: 900px;
       margin: 10px auto 20px;
-      border-radius: 28px; /* 四角大圓角/橢圓弧度 */
+      border-radius: 28px;
       overflow: hidden;
       box-shadow: 0 10px 25px rgba(233, 30, 99, 0.15);
       border: 3px solid #ffffff;
@@ -121,26 +121,28 @@
       margin-bottom: 25px;
     }
 
-    /* 超大滾輪顯示框 */
+    /* 改為紫色背景的滾輪顯示框 */
     .slot-display {
       width: 100%;
       max-width: 700px;
       height: 190px;
-      background: linear-gradient(145deg, #1e293b, #0f172a);
+      background: linear-gradient(135deg, #4a154b, #6b21a8, #3b0764);
       border: 5px solid #e91e63;
       border-radius: 24px;
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 12px 35px rgba(233, 30, 99, 0.25);
+      box-shadow: 0 12px 35px rgba(107, 33, 168, 0.4);
       position: relative;
       overflow: hidden;
     }
+
+    /* 改為亮黃色發光字體 */
     .slot-name {
       font-size: 58px;
       font-weight: 900;
-      color: #00f2fe;
-      text-shadow: 0 0 20px rgba(0, 242, 254, 0.6);
+      color: #ffeb3b;
+      text-shadow: 0 0 20px rgba(255, 235, 59, 0.8), 0 0 10px rgba(255, 193, 7, 0.6);
       letter-spacing: 2px;
     }
 
@@ -244,6 +246,7 @@
     <div class="stage-container">
       <div class="stage-info" id="stageInfo">目前名單：共 500 位</div>
 
+      <!-- 紫色背景 + 亮黃字體滾輪 -->
       <div class="slot-display">
         <div class="slot-name" id="slotName">準備抽獎</div>
       </div>
