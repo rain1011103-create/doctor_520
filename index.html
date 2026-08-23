@@ -5,274 +5,190 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>醫生抽獎系統</title>
   <style>
-    :root {
-      --primary: #f43f5e;
-      --primary-hover: #e11d48;
-      --bg: #f8fafc;
-      --text: #1e293b;
-    }
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background-color: var(--bg);
-      color: var(--text);
-      display: flex;
-      justify-content: center;
-      padding: 20px 10px;
       margin: 0;
-    }
-    .wrapper {
-      width: 100%;
-      max-width: 800px;
-    }
-    /* 頂部橫幅設定 */
-    .banner-container {
-      width: 100%;
-      border-radius: 16px;
-      overflow: hidden;
-      margin-bottom: 20px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-      background-color: #fff;
-    }
-    .banner-img {
-      width: 100%;
-      height: auto;
-      display: block;
-      object-fit: cover;
-    }
-    .container {
-      background: white;
-      width: 100%;
-      padding: 30px;
-      border-radius: 16px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.05);
-      display: flex;
-      flex-wrap: wrap;
-      gap: 30px;
-      box-sizing: border-box;
-    }
-    .left-panel {
-      flex: 1;
-      min-width: 250px;
-    }
-    .right-panel {
-      flex: 1;
-      min-width: 300px;
+      padding: 0;
+      font-family: "Microsoft JhengHei", sans-serif;
+      background-color: #fff0f5;
       display: flex;
       flex-direction: column;
       align-items: center;
     }
-    h1 {
-      margin-top: 0;
-      color: var(--primary);
-      font-size: 24px;
-    }
-    label { font-weight: bold; display: block; margin-bottom: 8px; }
-    textarea {
+
+    /* 頂端橫幅 */
+    .banner-container {
       width: 100%;
-      padding: 10px;
-      border: 2px solid #e2e8f0;
-      border-radius: 8px;
-      box-sizing: border-box;
-      outline: none;
-      resize: vertical;
+      display: flex;
+      justify-content: center;
+      background-color: #fce4ec;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
     }
-    button {
+    .banner-container img {
       width: 100%;
-      background-color: var(--primary);
-      color: white;
-      border: none;
-      padding: 12px;
-      font-size: 16px;
-      font-weight: bold;
-      border-radius: 8px;
-      cursor: pointer;
-      margin-top: 10px;
-      transition: 0.2s;
+      max-width: 900px;
+      height: auto;
+      display: block;
     }
-    button:hover { background-color: var(--primary-hover); }
-    button:disabled { background-color: #cbd5e1; cursor: not-allowed; }
-    
+
+    /* 轉盤外層容器 */
     .wheel-container {
       position: relative;
-      width: 300px;
-      height: 300px;
-      margin: 20px auto;
+      margin: 30px auto;
+      width: 320px;
+      height: 320px;
     }
-    .wheel {
-      width: 100%;
-      height: 100%;
-      border-radius: 50%;
-      border: 8px solid #334155;
-      box-sizing: border-box;
-      position: relative;
-      overflow: hidden;
-      transition: transform 4s cubic-bezier(0.1, 0.7, 0.1, 1);
-    }
+
+    /* 頂部指針 */
     .pointer {
       position: absolute;
-      top: -15px;
+      top: -10px;
       left: 50%;
       transform: translateX(-50%);
       width: 0;
       height: 0;
-      border-left: 20px solid transparent;
-      border-right: 20px solid transparent;
-      border-top: 35px solid var(--primary);
+      border-left: 15px solid transparent;
+      border-right: 15px solid transparent;
+      border-top: 25px solid #ff4081;
       z-index: 10;
-      filter: drop-shadow(0 4px 2px rgba(0,0,0,0.3));
     }
-    .winner-text {
-      font-size: 22px;
+
+    /* 轉盤畫布 */
+    #wheelCanvas {
+      border-radius: 50%;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      transition: transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99);
+    }
+
+    /* 操作區 */
+    .controls {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 40px;
+    }
+
+    .spin-btn {
+      padding: 12px 36px;
+      font-size: 18px;
       font-weight: bold;
-      color: var(--primary);
-      min-height: 36px;
-      margin-top: 15px;
-      text-align: center;
+      color: white;
+      background-color: #ff69b4;
+      border: none;
+      border-radius: 25px;
+      cursor: pointer;
+      box-shadow: 0 4px 8px rgba(255, 105, 180, 0.4);
+      transition: 0.2s;
+    }
+    .spin-btn:hover {
+      background-color: #ff4081;
+      transform: scale(1.05);
+    }
+    .spin-btn:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    /* 抽中結果文字 */
+    #resultText {
+      font-size: 20px;
+      font-weight: bold;
+      color: #d81b60;
+      min-height: 28px;
     }
   </style>
 </head>
 <body>
 
-  <div class="wrapper">
-    <!-- 頂部橫幅圖片 -->
-    <div class="banner-container">
-      <img src="banner.jpg" alt="醫生抽獎系統橫幅" class="banner-img" id="bannerImg">
-    </div>
+  <!-- 頂部橫幅區塊 -->
+  <header class="banner-container">
+    <img src="banner.png" alt="醫生抽獎系統橫幅">
+  </header>
 
-    <div class="container">
-      <div class="left-panel">
-        <h1>醫生抽獎系統</h1>
-        <label>參加名單（每行一位）：</label>
-        <textarea id="nameList" rows="8">小明
-小華
-小美
-阿強
-小玲
-阿輝</textarea>
-        <button id="updateBtn" onclick="drawWheel()" style="background-color: #3b82f6;">更新轉盤名單</button>
-        
-        <div style="margin-top: 30px; background: #f1f5f9; padding: 15px; border-radius: 8px;">
-          <label>中獎名單紀錄</label>
-          <ul id="winnerList" style="margin: 0; padding-left: 20px;"></ul>
-        </div>
-      </div>
+  <!-- 轉盤區塊 -->
+  <div class="wheel-container">
+    <div class="pointer"></div>
+    <canvas id="wheelCanvas" width="320" height="320"></canvas>
+  </div>
 
-      <div class="right-panel">
-        <div class="wheel-container">
-          <div class="pointer"></div>
-          <canvas id="wheelCanvas" width="300" height="300" class="wheel"></canvas>
-        </div>
-        <button id="spinBtn" onclick="spinWheel()" style="width: 200px;">開始旋轉</button>
-        <div class="winner-text" id="winnerText">準備就緒</div>
-      </div>
-    </div>
+  <!-- 按鈕與結果 -->
+  <div class="controls">
+    <button class="spin-btn" id="spinBtn" onclick="spinWheel()">開始抽獎</button>
+    <div id="resultText"></div>
   </div>
 
   <script>
-    const canvas = document.getElementById('wheelCanvas');
-    const ctx = canvas.getContext('2d');
-    const radius = canvas.width / 2;
-    const centerX = canvas.width / 2;
-    const centerY = canvas.height / 2;
+    // 1. 設定獎項清單與對應顏色
+    const prizes = ["特等獎", "謝謝參與", "二獎", "小禮物", "再來一次", "頭獎"];
+    const colors = ["#ffcdd2", "#f8bbd0", "#e1bee7", "#d1c4e9", "#c5cae9", "#bbdefb"];
     
-    let candidates = [];
+    const canvas = document.getElementById("wheelCanvas");
+    const ctx = canvas.getContext("2d");
+    const spinBtn = document.getElementById("spinBtn");
+    const resultText = document.getElementById("resultText");
+
+    const numSegments = prizes.length;
+    const arcSize = (2 * Math.PI) / numSegments;
     let currentRotation = 0;
     let isSpinning = false;
-    
-    const colors = ['#f87171', '#fbbf24', '#34d399', '#60a5fa', '#a78bfa', '#f472b6', '#fb923c', '#38bdf8'];
 
-    function getCandidates() {
-      const text = document.getElementById('nameList').value.trim();
-      if (!text) return [];
-      return text.split('\n').map(name => name.trim()).filter(name => name.length > 0);
-    }
-
+    // 2. 繪製轉盤扇形與文字
     function drawWheel() {
-      candidates = getCandidates();
-      if (candidates.length === 0) {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        return;
-      }
-
-      const sliceAngle = (2 * Math.PI) / candidates.length;
+      const radius = canvas.width / 2;
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      candidates.forEach((name, i) => {
+      for (let i = 0; i < numSegments; i++) {
+        const angle = i * arcSize;
         ctx.beginPath();
-        ctx.moveTo(centerX, centerY);
-        ctx.arc(centerX, centerY, radius, i * sliceAngle, (i + 1) * sliceAngle);
         ctx.fillStyle = colors[i % colors.length];
+        ctx.moveTo(radius, radius);
+        ctx.arc(radius, radius, radius, angle, angle + arcSize);
         ctx.fill();
         ctx.stroke();
 
+        // 繪製文字
         ctx.save();
-        ctx.translate(centerX, centerY);
-        ctx.rotate(i * sliceAngle + sliceAngle / 2);
-        ctx.textAlign = 'right';
-        ctx.fillStyle = '#fff';
-        ctx.font = 'bold 16px sans-serif';
-        let displayName = name.length > 6 ? name.substring(0, 5) + '..' : name;
-        ctx.fillText(displayName, radius - 15, 6);
+        ctx.fillStyle = "#333";
+        ctx.font = "bold 14px sans-serif";
+        ctx.translate(radius, radius);
+        ctx.rotate(angle + arcSize / 2);
+        ctx.textAlign = "right";
+        ctx.fillText(prizes[i], radius - 20, 5);
         ctx.restore();
-      });
-      
-      ctx.beginPath();
-      ctx.arc(centerX, centerY, 15, 0, 2 * Math.PI);
-      ctx.fillStyle = '#ffffff';
-      ctx.fill();
+      }
     }
 
+    // 3. 點擊抽獎邏輯
     function spinWheel() {
-      candidates = getCandidates();
-      if (candidates.length < 2) {
-        alert('請至少輸入兩位參加者！');
-        return;
-      }
       if (isSpinning) return;
-
       isSpinning = true;
-      document.getElementById('spinBtn').disabled = true;
-      document.getElementById('winnerText').innerText = '旋轉中...';
+      spinBtn.disabled = true;
+      resultText.innerText = "抽獎中...";
 
-      const spinDegrees = Math.random() * 360 + 1800; 
-      currentRotation += spinDegrees;
+      // 隨機選出中獎 index (0 ~ numSegments - 1)
+      const winningIndex = Math.floor(Math.random() * numSegments);
 
+      // 計算指針指向該扇區所需的角度
+      const segmentDeg = 360 / numSegments;
+      // 指針在最上方 (270度位置)，需做角度補償
+      const targetDeg = 270 - (winningIndex * segmentDeg + segmentDeg / 2);
+      const extraRotations = 360 * 5; // 多轉 5 圈增加刺激感
+      
+      currentRotation += extraRotations + ((targetDeg - (currentRotation % 360) + 360) % 360);
       canvas.style.transform = `rotate(${currentRotation}deg)`;
 
+      // 動畫結束後顯示結果 (對應 CSS 4 秒)
       setTimeout(() => {
-        const sliceAngle = 360 / candidates.length;
-        const normalizedRotation = currentRotation % 360;
-        const winningAngle = (360 - normalizedRotation + 270) % 360; 
-        
-        const winningIndex = Math.floor(winningAngle / sliceAngle);
-        const winner = candidates[winningIndex];
-
-        document.getElementById('winnerText').innerText = `恭喜中獎者：${winner}`;
-        
-        const list = document.getElementById('winnerList');
-        const li = document.createElement('li');
-        li.innerText = winner;
-        list.appendChild(li);
-
-        candidates.splice(winningIndex, 1);
-        document.getElementById('nameList').value = candidates.join('\n');
-        
         isSpinning = false;
-        document.getElementById('spinBtn').disabled = false;
-        
-        setTimeout(() => {
-           canvas.style.transition = 'none';
-           currentRotation = 0;
-           canvas.style.transform = `rotate(0deg)`;
-           drawWheel();
-           setTimeout(() => canvas.style.transition = 'transform 4s cubic-bezier(0.1, 0.7, 0.1, 1)', 50);
-        }, 2000);
-
+        spinBtn.disabled = false;
+        resultText.innerText = `🎉 恭喜獲得：【${prizes[winningIndex]}】！`;
       }, 4000);
     }
 
+    // 初始化轉盤
     drawWheel();
   </script>
-
 </body>
 </html>
