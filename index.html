@@ -12,95 +12,105 @@
       margin: 0;
       padding: 0;
       font-family: "Microsoft JhengHei", "PingFang TC", sans-serif;
-      background-color: #f7f9fb;
+      background-color: #fce4ec;
       display: flex;
       flex-direction: column;
       align-items: center;
     }
 
-    /* 頂部橫幅區塊 */
+    /* 頂部橫幅 */
     .banner-container {
       width: 100%;
       background-color: #fff;
       display: flex;
       justify-content: center;
-      border-bottom: 1px solid #eef0f2;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+      border-bottom: 2px solid #f8bbd0;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
     }
     .banner-container img {
       width: 100%;
-      max-width: 850px;
+      max-width: 1200px;
       height: auto;
       display: block;
     }
 
-    /* 主卡片容器 */
+    /* 主卡片容器：擴大寬度以容納大轉盤 */
     .main-card {
       background: #ffffff;
-      margin: 25px 15px 40px;
-      padding: 30px;
-      border-radius: 16px;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
-      max-width: 850px;
-      width: calc(100% - 30px);
+      margin: 30px auto 50px;
+      padding: 35px;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+      max-width: 1200px;
+      width: calc(100% - 40px);
     }
 
     .system-title {
-      color: #ff3366;
-      margin: 0 0 20px 0;
-      font-size: 22px;
+      color: #e91e63;
+      margin: 0 0 25px 0;
+      font-size: 26px;
       font-weight: bold;
+      text-align: center;
     }
 
     .layout-grid {
       display: flex;
       flex-wrap: wrap;
-      gap: 30px;
-      justify-content: space-between;
+      gap: 40px;
+      justify-content: center;
+      align-items: flex-start;
     }
 
-    /* 左側輸入區 */
+    /* 左側輸入與設定區 */
     .input-section {
       flex: 1;
-      min-width: 280px;
+      min-width: 320px;
+      max-width: 420px;
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 15px;
     }
 
     .input-section label {
       font-weight: bold;
       color: #333;
-      font-size: 15px;
+      font-size: 16px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .count-badge {
+      color: #e91e63;
+      font-weight: bold;
     }
 
     textarea {
       width: 100%;
-      height: 160px;
-      border: 1px solid #dcdfe6;
-      border-radius: 8px;
-      padding: 10px;
-      font-size: 14px;
+      height: 240px;
+      border: 2px solid #f8bbd0;
+      border-radius: 12px;
+      padding: 12px;
+      font-size: 15px;
       line-height: 1.6;
       resize: vertical;
       outline: none;
-      transition: border 0.2s;
+      transition: border-color 0.2s;
     }
 
     textarea:focus {
-      border-color: #3b82f6;
+      border-color: #e91e63;
     }
 
     .btn-update {
       background-color: #3b82f6;
       color: white;
       border: none;
-      padding: 10px;
-      border-radius: 8px;
-      font-size: 15px;
+      padding: 14px;
+      border-radius: 10px;
+      font-size: 16px;
       font-weight: bold;
       cursor: pointer;
-      transition: background-color 0.2s;
+      transition: 0.2s;
     }
 
     .btn-update:hover {
@@ -109,26 +119,26 @@
 
     .history-box {
       margin-top: 10px;
-      background: #f8fafc;
-      border-radius: 8px;
-      padding: 12px;
-      border: 1px solid #e2e8f0;
-      max-height: 120px;
+      background: #fff5f8;
+      border-radius: 12px;
+      padding: 16px;
+      border: 1px solid #f8bbd0;
+      max-height: 180px;
       overflow-y: auto;
-      font-size: 13px;
+      font-size: 14px;
       color: #475569;
     }
 
     .history-title {
       font-weight: bold;
-      color: #1e293b;
-      margin-bottom: 6px;
+      color: #c2185b;
+      margin-bottom: 8px;
     }
 
     /* 右側轉盤區 */
     .wheel-section {
-      flex: 1;
-      min-width: 300px;
+      flex: 1.2;
+      min-width: 360px;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -137,85 +147,112 @@
 
     .wheel-wrapper {
       position: relative;
-      width: 280px;
-      height: 280px;
+      width: 480px;
+      height: 480px;
+      max-width: 100%;
+      max-height: 480px;
+      aspect-ratio: 1 / 1;
     }
 
     .pointer {
       position: absolute;
-      top: -12px;
+      top: -18px;
       left: 50%;
       transform: translateX(-50%);
       width: 0;
       height: 0;
-      border-left: 14px solid transparent;
-      border-right: 14px solid transparent;
-      border-top: 24px solid #ff3366;
+      border-left: 20px solid transparent;
+      border-right: 20px solid transparent;
+      border-top: 36px solid #e91e63;
       z-index: 10;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
     }
 
     #wheelCanvas {
+      width: 100%;
+      height: 100%;
       border-radius: 50%;
-      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
-      transition: transform 4s cubic-bezier(0.15, 0.9, 0.2, 1);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+      transition: transform 4.5s cubic-bezier(0.12, 0.85, 0.15, 1);
     }
 
     .btn-spin {
-      margin-top: 20px;
-      background-color: #ff3366;
+      margin-top: 25px;
+      background: linear-gradient(135deg, #ff4081, #e91e63);
       color: white;
       border: none;
-      padding: 12px 40px;
-      border-radius: 25px;
-      font-size: 16px;
+      padding: 16px 60px;
+      border-radius: 35px;
+      font-size: 20px;
       font-weight: bold;
       cursor: pointer;
-      box-shadow: 0 4px 10px rgba(255, 51, 102, 0.3);
+      box-shadow: 0 6px 16px rgba(233, 30, 99, 0.35);
       transition: 0.2s;
     }
 
     .btn-spin:hover {
-      background-color: #e62054;
-      transform: scale(1.03);
+      transform: scale(1.04);
+      box-shadow: 0 8px 20px rgba(233, 30, 99, 0.45);
     }
 
     .btn-spin:disabled {
-      background-color: #cbd5e1;
+      background: #cbd5e1;
       box-shadow: none;
       cursor: not-allowed;
       transform: none;
     }
 
     .status-text {
-      margin-top: 12px;
-      font-size: 16px;
+      margin-top: 15px;
+      font-size: 22px;
       font-weight: bold;
-      color: #ff3366;
-      min-height: 24px;
+      color: #c2185b;
+      min-height: 32px;
+      text-align: center;
+    }
+
+    /* 手機螢幕自適應 */
+    @media (max-width: 600px) {
+      .wheel-wrapper {
+        width: 320px;
+        height: 320px;
+      }
+      .main-card {
+        padding: 20px 15px;
+      }
     }
   </style>
 </head>
 <body>
 
-  <!-- 頂端橫幅（使用相對路徑） -->
+  <!-- 頂部橫幅 -->
   <header class="banner-container">
     <img src="./banner.png" alt="醫生抽獎系統橫幅">
   </header>
 
   <div class="main-card">
-    <div class="system-title">醫生抽獎系統</div>
+    <div class="system-title"> 醫生抽獎系統 </div>
     
     <div class="layout-grid">
       <!-- 左側自訂名單 -->
       <div class="input-section">
-        <label for="nameInput">參加名單（每行一位）：</label>
-        <textarea id="nameInput">小明
-小華
-小美
-阿強
-小玲
-阿輝</textarea>
-        <button class="btn-update" onclick="updateList()">更新轉盤名單</button>
+        <label for="nameInput">
+          <span>參加名單（每行一位）：</span>
+          <span class="count-badge" id="countBadge">共 0 人</span>
+        </label>
+        <textarea id="nameInput" placeholder="請在此貼上名單，一行一個名字...">醫生 1 號
+醫生 2 號
+醫生 3 號
+醫生 4 號
+醫生 5 號
+醫生 6 號
+醫生 7 號
+醫生 8 號
+醫生 9 號
+醫生 10 號
+醫生 11 號
+醫生 12 號</textarea>
+        <button class="btn-update" onclick="updateList()">🔄 更新並產生大轉盤</button>
         
         <div class="history-box">
           <div class="history-title">中獎名單紀錄</div>
@@ -223,22 +260,25 @@
         </div>
       </div>
 
-      <!-- 右側轉盤 -->
+      <!-- 右側大轉盤 -->
       <div class="wheel-section">
         <div class="wheel-wrapper">
           <div class="pointer"></div>
-          <canvas id="wheelCanvas" width="280" height="280"></canvas>
+          <!-- 內部畫布使用 1000x1000 確保超高清晰度 -->
+          <canvas id="wheelCanvas" width="1000" height="1000"></canvas>
         </div>
-        <button class="btn-spin" id="spinBtn" onclick="startSpin()">開始旋轉</button>
+        <button class="btn-spin" id="spinBtn" onclick="startSpin()">開始旋轉抽獎</button>
         <div class="status-text" id="statusText">準備就緒</div>
       </div>
     </div>
   </div>
 
   <script>
+    // 柔和且區別度高的配色盤
     const colors = [
       "#ff7675", "#fd79a8", "#a29bfe", "#74b9ff",
-      "#55efc4", "#ffeaa7", "#fab1a0", "#81ecec"
+      "#55efc4", "#ffeaa7", "#fab1a0", "#81ecec",
+      "#ff9ff3", "#feca57", "#54a0ff", "#5f27cd"
     ];
 
     let names = [];
@@ -251,18 +291,21 @@
     const statusText = document.getElementById("statusText");
     const historyList = document.getElementById("historyList");
     const nameInput = document.getElementById("nameInput");
+    const countBadge = document.getElementById("countBadge");
 
     function updateList() {
       if (isSpinning) return;
       const text = nameInput.value.trim();
       names = text.split("\n").map(n => n.trim()).filter(n => n.length > 0);
 
+      countBadge.innerText = `共 ${names.length} 人`;
+
       if (names.length < 2) {
         alert("請至少輸入 2 個名單項目！");
         return;
       }
       drawWheel();
-      statusText.innerText = "名單已更新，隨時可抽獎！";
+      statusText.innerText = `已載入 ${names.length} 位名單，隨時可開始！`;
     }
 
     function drawWheel() {
@@ -272,26 +315,50 @@
 
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+      // 動態計算字體大小：人數越多，字體自動等比縮小
+      let fontSize = 28;
+      if (numSegments > 40) fontSize = 14;
+      else if (numSegments > 24) fontSize = 18;
+      else if (numSegments > 16) fontSize = 22;
+
       for (let i = 0; i < numSegments; i++) {
         const angle = i * arcSize;
         ctx.beginPath();
         ctx.fillStyle = colors[i % colors.length];
         ctx.moveTo(radius, radius);
-        ctx.arc(radius, radius, radius, angle, angle + arcSize);
+        ctx.arc(radius, radius, radius - 10, angle, angle + arcSize);
         ctx.fill();
+        ctx.lineWidth = 2;
+        ctx.strokeStyle = "#ffffff";
         ctx.stroke();
 
+        // 繪製文字
         ctx.save();
-        ctx.fillStyle = "#ffffff";
-        ctx.shadowColor = "rgba(0,0,0,0.3)";
-        ctx.shadowBlur = 4;
-        ctx.font = "bold 15px sans-serif";
+        ctx.fillStyle = "#2c3e50";
+        ctx.font = `bold ${fontSize}px sans-serif`;
         ctx.translate(radius, radius);
         ctx.rotate(angle + arcSize / 2);
         ctx.textAlign = "right";
-        ctx.fillText(names[i], radius - 20, 5);
+        ctx.textBaseline = "middle";
+
+        // 文字過長時截斷或留白
+        let displayName = names[i];
+        if (displayName.length > 10 && numSegments > 20) {
+          displayName = displayName.substring(0, 8) + "..";
+        }
+
+        ctx.fillText(displayName, radius - 40, 0);
         ctx.restore();
       }
+
+      // 中心圓形白底裝飾
+      ctx.beginPath();
+      ctx.arc(radius, radius, 45, 0, 2 * Math.PI);
+      ctx.fillStyle = "#ffffff";
+      ctx.fill();
+      ctx.lineWidth = 6;
+      ctx.strokeStyle = "#e91e63";
+      ctx.stroke();
     }
 
     function startSpin() {
@@ -299,12 +366,12 @@
       
       isSpinning = true;
       spinBtn.disabled = true;
-      statusText.innerText = "抽獎中...";
+      statusText.innerText = "轉盤高速旋轉中...";
 
       const winningIndex = Math.floor(Math.random() * names.length);
       const segmentDeg = 360 / names.length;
       const targetDeg = 270 - (winningIndex * segmentDeg + segmentDeg / 2);
-      const extraRotations = 360 * 6; // 額外轉 6 圈
+      const extraRotations = 360 * 7; // 多轉 7 圈
 
       currentRotation += extraRotations + ((targetDeg - (currentRotation % 360) + 360) % 360);
       canvas.style.transform = `rotate(${currentRotation}deg)`;
@@ -313,15 +380,14 @@
         isSpinning = false;
         spinBtn.disabled = false;
         const winner = names[winningIndex];
-        statusText.innerText = `🎉 恭喜中獎：${winner}`;
+        statusText.innerText = `恭喜中獎：【${winner}】！`;
 
-        // 寫入中獎紀錄
         if (historyList.innerText === "尚無抽獎紀錄") {
           historyList.innerHTML = "";
         }
         const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
         historyList.innerHTML = `<div>• [${time}] <b>${winner}</b></div>` + historyList.innerHTML;
-      }, 4000);
+      }, 4500);
     }
 
     // 初始化啟動
