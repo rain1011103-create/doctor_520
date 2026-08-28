@@ -6,68 +6,85 @@
   <title>醫生抽獎系統</title>
   <style>
     * { box-sizing: border-box; }
+    
+    /* 滿版 PNG 圖片背景設定 */
     body {
       margin: 0;
       padding: 20px 0;
-      font-family: "Microsoft JhengHei", "PingFang TC", sans-serif;
-      background-color: #fce4ec;
+      font-family: -apple-system, BlinkMacSystemFont, "Microsoft JhengHei", "PingFang TC", sans-serif;
+      background: url('background.png') no-repeat center center fixed;
+      background-size: cover;
       display: flex;
       flex-direction: column;
       align-items: center;
       min-height: 100vh;
     }
 
-    /* 美化後的四角橢圓橫幅 */
+    /* 保留並美化四角橢圓橫幅 */
     .banner-container {
       width: calc(100% - 40px);
       max-width: 900px;
       margin: 10px auto 20px;
       border-radius: 28px;
       overflow: hidden;
-      box-shadow: 0 10px 25px rgba(233, 30, 99, 0.15);
-      border: 3px solid #ffffff;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+      border: 4px solid rgba(255, 255, 255, 0.9);
       background-color: #ffffff;
       display: flex;
       justify-content: center;
+      transition: transform 0.3s ease;
+    }
+    .banner-container:hover {
+      transform: translateY(-2px);
     }
     .banner-container img {
       width: 100%;
       height: auto;
       display: block;
-      border-radius: 25px;
+      border-radius: 24px;
     }
 
-    /* 分頁導覽列 */
+    /* 分頁導覽列（毛玻璃質感） */
     .nav-tabs {
       display: flex;
       gap: 15px;
       margin: 10px 0 15px;
     }
     .tab-btn {
-      padding: 12px 32px;
+      padding: 12px 36px;
       font-size: 16px;
       font-weight: bold;
-      border: none;
+      border: 2px solid rgba(255, 255, 255, 0.8);
       border-radius: 30px;
-      background-color: #ffffff;
-      color: #718096;
+      background: rgba(255, 255, 255, 0.75);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      color: #5a6b7c;
       cursor: pointer;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.06);
-      transition: 0.2s;
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.06);
+      transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
+    .tab-btn:hover {
+      transform: translateY(-2px);
+      background: rgba(255, 255, 255, 0.95);
     }
     .tab-btn.active {
-      background-color: #e91e63;
+      background: linear-gradient(135deg, #ff4e50 0%, #f9d423 100%);
       color: #ffffff;
-      box-shadow: 0 4px 15px rgba(233, 30, 99, 0.35);
+      border-color: transparent;
+      box-shadow: 0 6px 20px rgba(255, 78, 80, 0.35);
     }
 
-    /* 主卡片面板 */
+    /* 主卡片面板（毛玻璃透出背景） */
     .view-panel {
       display: none;
-      background: #ffffff;
+      background: rgba(255, 255, 255, 0.82);
+      backdrop-filter: blur(15px);
+      -webkit-backdrop-filter: blur(15px);
+      border: 2px solid rgba(255, 255, 255, 0.9);
       padding: 35px;
-      border-radius: 24px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+      border-radius: 28px;
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
       max-width: 900px;
       width: calc(100% - 40px);
       margin-bottom: 25px;
@@ -76,36 +93,45 @@
 
     /* 設定頁面樣式 */
     .setting-title {
-      font-size: 20px;
+      font-size: 22px;
       font-weight: bold;
-      color: #e91e63;
+      color: #2b3a4a;
       margin-bottom: 12px;
     }
     textarea {
       width: 100%;
       height: 260px;
-      border: 2px solid #f8bbd0;
-      border-radius: 12px;
-      padding: 14px;
+      border: 2px solid rgba(233, 30, 99, 0.3);
+      border-radius: 16px;
+      padding: 16px;
       font-size: 15px;
       line-height: 1.6;
       resize: vertical;
       outline: none;
       font-family: inherit;
+      background: rgba(255, 255, 255, 0.9);
+      transition: border-color 0.3s ease;
+    }
+    textarea:focus {
+      border-color: #ff4e50;
     }
     .btn-action {
-      background-color: #3b82f6;
+      background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
       color: white;
       border: none;
-      padding: 14px 30px;
-      border-radius: 10px;
+      padding: 14px 35px;
+      border-radius: 30px;
       font-size: 16px;
       font-weight: bold;
       cursor: pointer;
       margin-top: 15px;
-      transition: 0.2s;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(37, 99, 235, 0.25);
     }
-    .btn-action:hover { background-color: #2563eb; }
+    .btn-action:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(37, 99, 235, 0.35);
+    }
 
     /* 抽獎舞台頁面 */
     .stage-container {
@@ -115,9 +141,9 @@
       text-align: center;
     }
     .stage-info {
-      font-size: 18px;
+      font-size: 19px;
       font-weight: bold;
-      color: #c2185b;
+      color: #2b3a4a;
       margin-bottom: 15px;
     }
 
@@ -127,14 +153,15 @@
       align-items: center;
       gap: 12px;
       margin-bottom: 25px;
-      background: #fff0f5;
+      background: rgba(255, 255, 255, 0.85);
       padding: 10px 24px;
       border-radius: 30px;
-      border: 1px solid #f8bbd0;
+      border: 1px solid rgba(233, 30, 99, 0.2);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03);
     }
     .count-selector-container label {
       font-weight: bold;
-      color: #c2185b;
+      color: #d81b60;
       font-size: 15px;
     }
     .count-input {
@@ -143,54 +170,58 @@
       font-size: 16px;
       font-weight: bold;
       text-align: center;
-      border: 2px solid #e91e63;
-      border-radius: 8px;
+      border: 2px solid #ff4e50;
+      border-radius: 10px;
       outline: none;
-      color: #c2185b;
+      color: #d81b60;
+      background: #ffffff;
     }
 
-    /* 紫色背景的滾輪顯示框 */
+    /* 紫色背景的滾輪顯示框（增強霓虹光澤） */
     .slot-display {
       width: 100%;
       max-width: 700px;
-      height: 190px;
-      background: linear-gradient(135deg, #4a154b, #6b21a8, #3b0764);
-      border: 5px solid #e91e63;
-      border-radius: 24px;
+      height: 200px;
+      background: linear-gradient(135deg, #2a0845, #4a154b, #6b21a8);
+      border: 4px solid #f9d423;
+      border-radius: 28px;
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 12px 35px rgba(107, 33, 168, 0.4);
+      box-shadow: 0 15px 35px rgba(74, 21, 75, 0.4), inset 0 0 15px rgba(249, 212, 35, 0.3);
       position: relative;
       overflow: hidden;
     }
 
     /* 亮黃色發光字體 */
     .slot-name {
-      font-size: 58px;
+      font-size: 56px;
       font-weight: 900;
       color: #ffeb3b;
-      text-shadow: 0 0 20px rgba(255, 235, 59, 0.8), 0 0 10px rgba(255, 193, 7, 0.6);
+      text-shadow: 0 0 25px rgba(255, 235, 59, 0.9), 0 0 12px rgba(255, 193, 7, 0.7);
       letter-spacing: 2px;
     }
 
     /* 抽獎按鈕 */
     .btn-spin-large {
       margin-top: 30px;
-      background: linear-gradient(135deg, #ff4081, #e91e63);
+      background: linear-gradient(135deg, #ff4e50 0%, #f9d423 100%);
       color: white;
       border: none;
-      padding: 18px 70px;
+      padding: 18px 75px;
       border-radius: 40px;
       font-size: 24px;
       font-weight: bold;
       cursor: pointer;
-      box-shadow: 0 8px 25px rgba(233, 30, 99, 0.35);
-      transition: 0.2s;
+      box-shadow: 0 10px 25px rgba(255, 78, 80, 0.35);
+      transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
     }
     .btn-spin-large:hover {
-      transform: scale(1.03);
-      box-shadow: 0 12px 30px rgba(233, 30, 99, 0.45);
+      transform: translateY(-3px) scale(1.03);
+      box-shadow: 0 14px 30px rgba(255, 78, 80, 0.45);
+    }
+    .btn-spin-large:active {
+      transform: translateY(-1px) scale(0.99);
     }
     .btn-spin-large:disabled {
       background: #cbd5e1;
@@ -204,10 +235,10 @@
       margin-top: 30px;
       width: 100%;
       max-width: 700px;
-      background: #fff5f8;
-      border-radius: 14px;
-      padding: 18px;
-      border: 1px solid #f8bbd0;
+      background: rgba(255, 255, 255, 0.7);
+      border-radius: 18px;
+      padding: 20px;
+      border: 1px solid rgba(233, 30, 99, 0.2);
       text-align: left;
     }
     .history-header {
@@ -216,21 +247,21 @@
       align-items: center;
       margin-bottom: 12px;
     }
-    .history-card h4 { margin: 0; color: #c2185b; font-size: 16px; }
+    .history-card h4 { margin: 0; color: #d81b60; font-size: 16px; font-weight: bold; }
     .btn-clear-history {
       background-color: #ffffff;
-      color: #e91e63;
-      border: 1px solid #f8bbd0;
-      padding: 5px 14px;
-      border-radius: 15px;
+      color: #d81b60;
+      border: 1px solid rgba(233, 30, 99, 0.3);
+      padding: 6px 16px;
+      border-radius: 20px;
       font-size: 13px;
       font-weight: bold;
       cursor: pointer;
-      transition: 0.2s;
+      transition: all 0.2s ease;
     }
     .btn-clear-history:hover {
-      background-color: #fce4ec;
-      border-color: #e91e63;
+      background-color: #fff0f5;
+      border-color: #d81b60;
     }
     .history-items {
       max-height: 150px;
@@ -247,12 +278,15 @@
       margin: 10px auto 25px;
       text-align: center;
       padding: 18px 20px;
-      background-color: rgba(255, 255, 255, 0.6);
+      background-color: rgba(255, 255, 255, 0.75);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
       border: 1px dashed #f48fb1;
-      border-radius: 16px;
+      border-radius: 20px;
       color: #880e4f;
       font-size: 13px;
       line-height: 1.8;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
     }
     .footer-disclaimer .disclaimer-title {
       font-weight: bold;
@@ -261,13 +295,14 @@
       color: #ad1457;
     }
 
-    /* 中獎彈窗 */
+    /* 中獎彈窗美化 */
     .winner-modal {
       display: none;
       position: fixed;
       top: 0; left: 0;
       width: 100vw; height: 100vh;
-      background: rgba(0,0,0,0.75);
+      background: rgba(0,0,0,0.65);
+      backdrop-filter: blur(5px);
       z-index: 1000;
       align-items: center;
       justify-content: center;
@@ -277,9 +312,9 @@
     .modal-content {
       background: #ffffff;
       padding: 40px 45px;
-      border-radius: 24px;
+      border-radius: 28px;
       text-align: center;
-      box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+      box-shadow: 0 25px 50px rgba(0,0,0,0.3);
       max-width: 650px;
       width: 100%;
       max-height: 85vh;
@@ -297,32 +332,38 @@
       padding: 5px;
     }
     .modal-winner-badge {
-      background: linear-gradient(135deg, #fce4ec, #f8bbd0);
+      background: linear-gradient(135deg, #fff0f5, #f8bbd0);
       color: #c2185b;
       padding: 12px 24px;
-      border-radius: 12px;
+      border-radius: 16px;
       font-size: 24px;
       font-weight: 900;
-      border: 2px solid #e91e63;
-      box-shadow: 0 4px 10px rgba(233, 30, 99, 0.15);
+      border: 2px solid #ff4e50;
+      box-shadow: 0 6px 15px rgba(233, 30, 99, 0.15);
     }
     .modal-close-btn {
-      background: #3b82f6;
+      background: linear-gradient(135deg, #3b82f6, #2563eb);
       color: white;
       border: none;
-      padding: 12px 35px;
+      padding: 12px 40px;
       font-size: 16px;
-      border-radius: 20px;
+      border-radius: 25px;
       cursor: pointer;
       font-weight: bold;
       margin-top: 10px;
       align-self: center;
+      box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
+      transition: all 0.2s ease;
+    }
+    .modal-close-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4);
     }
   </style>
 </head>
 <body>
 
-  <!-- 四角微橢圓美化橫幅 -->
+  <!-- 保留四角微橢圓橫幅 -->
   <header class="banner-container">
     <img src="./banner.png" alt="醫生抽獎系統橫幅">
   </header>
@@ -342,7 +383,7 @@
       <div class="count-selector-container">
         <label for="drawCount">每次抽出人數：</label>
         <input type="number" id="drawCount" class="count-input" value="1" min="1" max="1">
-        <span style="color: #888; font-size: 14px;">位</span>
+        <span style="color: #666; font-size: 14px; font-weight: bold;">位</span>
       </div>
 
       <!-- 紫色背景 + 亮黃字體滾輪 -->
@@ -366,7 +407,7 @@
   <!-- 分頁 2：名單設定 -->
   <div id="settingsPanel" class="view-panel">
     <div class="setting-title">參加名單管理</div>
-    <p style="color: #666; font-size: 14px; margin-top: -5px;">請在下方貼上或輸入抽獎名單，一行一位：</p>
+    <p style="color: #555; font-size: 14px; margin-top: -5px;">請在下方貼上或輸入抽獎名單，一行一位：</p>
     <textarea id="nameInput" placeholder="請在此輸入名單"></textarea>
     <br>
     <button class="btn-action" onclick="saveNames()">儲存名單並更新</button>
@@ -382,7 +423,7 @@
   <!-- 中獎彈窗（支援多位得獎者展示） -->
   <div class="winner-modal" id="winnerModal">
     <div class="modal-content">
-      <h2 style="margin: 0; color: #64748b; font-size: 22px;" id="modalTitle">恭喜中獎幸運兒</h2>
+      <h2 style="margin: 0; color: #475569; font-size: 22px;" id="modalTitle">恭喜中獎幸運兒</h2>
       <div class="modal-winner-container" id="modalWinnerContainer"></div>
       <button class="modal-close-btn" onclick="closeModal()">確認</button>
     </div>
